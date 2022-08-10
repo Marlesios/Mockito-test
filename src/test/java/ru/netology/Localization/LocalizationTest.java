@@ -1,10 +1,10 @@
-package ru.netology;
+package ru.netology.Localization;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.netology.entity.Country;
-import ru.netology.i18n.LocalizationService;
+import ru.netology.Localization.LocalizationService;
 
 public class LocalizationTest {
     @Test

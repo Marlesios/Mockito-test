@@ -1,20 +1,15 @@
-package ru.netology;
+package ru.netology.sender;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.netology.entity.Country;
 import ru.netology.entity.Location;
 import ru.netology.geo.GeoService;
-import ru.netology.geo.GeoServiceImpl;
-import ru.netology.i18n.LocalizationService;
-import ru.netology.i18n.LocalizationServiceImpl;
-import ru.netology.sender.MessageSender;
+import ru.netology.Localization.LocalizationService;
 import ru.netology.sender.MessageSenderImpl;
 
-import javax.print.attribute.HashPrintJobAttributeSet;
 import java.util.HashMap;
 
 public class MessageSenderTest {
@@ -60,12 +55,11 @@ public class MessageSenderTest {
         String actual = "Welcome";
 
         Assertions.assertEquals(expected, actual);
-        Mockito.verify(localizationService,Mockito.times(2)).locale(Mockito.<Country>any());
-        Mockito.verify(geoService,Mockito.times(1)).byIp(Mockito.<String>any());
+
     }
 
     @Test
-    void textSendTest_Argument_Capture(){
+    void argumentCapture(){
         HashMap<String, String> mock = new HashMap<String, String>();
         mock.put(MessageSenderImpl.IP_ADDRESS_HEADER, "96.44.183.149");
 
@@ -73,20 +67,18 @@ public class MessageSenderTest {
         Mockito.when(geoService.byIp(Mockito.contains("96")))
                 .thenReturn(new Location("New York", Country.USA, " 10th Avenue", 32));
 
+
         LocalizationService localizationService = Mockito.mock(LocalizationService.class);
         Mockito.when(localizationService.locale(Country.USA))
                 .thenReturn("Welcome");
 
         MessageSenderImpl messageSender = new MessageSenderImpl(geoService, localizationService);
-        String expected = messageSender.send(mock);
-        String actual = "Welcome";
+        messageSender.send(mock);
 
-        ArgumentCaptor<String > argumentCaptor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(geoService).byIp(argumentCaptor.capture());
-        Assertions.assertEquals("96.44.183.149",argumentCaptor.getValue());
-
-        ArgumentCaptor<Country> argumentCaptor1 = ArgumentCaptor.forClass(Country.class);
-        Mockito.verify(localizationService,Mockito.times(2)).locale(argumentCaptor1.capture());
-        Assertions.assertEquals(Country.USA,argumentCaptor1.getValue());
+        ArgumentCaptor<Country> argumentCaptor = ArgumentCaptor.forClass(Country.class);
+        Mockito.verify(localizationService,Mockito.times(2)).locale(argumentCaptor.capture());
+        Assertions.assertEquals(Country.USA,argumentCaptor.getValue());
     }
+
+
 }
